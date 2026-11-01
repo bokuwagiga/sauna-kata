@@ -32,8 +32,7 @@ def calendar(today: str, days: int = 21) -> str:
 class CallerInfo:
     """What the caller has said so far, as read by the model. None means not said."""
 
-    intent: str = "other"  # book | change | cancel | check | other
-    wants_human: bool = False  # asked for a person, in any words
+    intent: str = "other"  # book | change | cancel | check | staff | other
     name: str | None = None  # full name, if the caller gave it
     people: int | None = None  # the larger number if a range
     when: str | None = None  # the caller's own words about the dates, quoted
@@ -53,16 +52,11 @@ def schema(unit_ids: list[str]) -> dict:
         "properties": {
             "intent": {
                 "type": "string",
-                "enum": ["book", "change", "cancel", "check", "other"],
+                "enum": ["book", "change", "cancel", "check", "staff", "other"],
                 "description": "book = new booking, change = move or alter an existing one, "
                 "cancel, check = asking about their existing booking, "
-                "other = anything else",
-            },
-            "wants_human": {
-                "type": "boolean",
-                "description": "True only if the caller asks to speak to a person at Pirtis on "
-                "Wheels (staff, a manager, 'a real person'). "
-                "Wanting to contact someone else is false.",
+                "staff = asks to be put through to a person at Pirtis on Wheels, "
+                "other = anything else, including questions about other customers",
             },
             "name": {
                 "type": ["string", "null"],
@@ -160,6 +154,8 @@ def extract(t: Transcript, units: list[Unit], llm: LlmClient) -> CallerInfo:
     )
     try:
         reply = llm.chat(req)
-        return CallerInfo(**json.loads(reply.content))
+        fields_ = json.loads(reply.content)
     except Exception:
         return CallerInfo()
+    # the model sometimes writes the word "null" instead of null
+    return CallerInfo(**{k: None if v == "null" else v for k, v in fields_.items()})
