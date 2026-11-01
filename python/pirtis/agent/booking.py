@@ -23,7 +23,7 @@ def weekend_end(start: str, end: str | None) -> str:
     if end is None:
         end = start
     if start != end:
-        return end
+        return end # two days or more always meets the minimum
     day = date.fromisoformat(start)
     if day.weekday() >= 5:
         day = day + timedelta(days=1)
