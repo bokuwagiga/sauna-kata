@@ -45,7 +45,7 @@ class Offer:
     start: str
     end: str
     weekend_extended: bool = False  # a one-day weekend rental made two days
-    dates_moved: bool = False  # their dates were taken for this unit
+    taken: tuple[str, ...] = ()  # the asked days this unit is not free, when moved
     asked_unit: Unit | None = None  # the unit they asked for, when we offer another
 
 
@@ -88,6 +88,14 @@ def _is_free(api: ApiClient, unit_id: str, start: str, end: str) -> bool:
     return any(r.start <= start and end <= r.end for r in _free_ranges(api, unit_id, start, end))
 
 
+def _taken_days(api: ApiClient, unit_id: str, start: str, end: str) -> tuple[str, ...]:
+    """The days from start to end when this unit is not free."""
+    free = _free_ranges(api, unit_id, start, end)
+    s, e = date.fromisoformat(start), date.fromisoformat(end)
+    days = ((s + timedelta(days=i)).isoformat() for i in range((e - s).days + 1))
+    return tuple(d for d in days if not any(r.start <= d <= r.end for r in free))
+
+
 def _nearby(
     api: ApiClient, unit_id: str, start: str, end: str, today: str
 ) -> tuple[str, str] | None:
@@ -126,7 +134,8 @@ def find_offer(info: CallerInfo, units: list[Unit], api: ApiClient, today: str) 
             return Offer(asked, info.start, end, weekend_extended=extended)
         moved = _nearby(api, asked.id, info.start, end, today)
         if moved is not None:
-            return Offer(asked, *moved, weekend_extended=extended, dates_moved=True)
+            taken = _taken_days(api, asked.id, info.start, end)
+            return Offer(asked, *moved, weekend_extended=extended, taken=taken)
     for u in fitting:
         if u is not asked and _is_free(api, u.id, info.start, end):
             return Offer(u, info.start, end, weekend_extended=extended, asked_unit=asked)
