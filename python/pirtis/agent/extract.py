@@ -1,6 +1,7 @@
 from dataclasses import dataclass, fields
 from datetime import date, timedelta
 
+from pirtis.api.types import Unit
 from pirtis.llm.client import Message
 from pirtis.transcript.types import Transcript
 
@@ -108,3 +109,21 @@ def history(t: Transcript) -> list[Message]:
             content = it.content + " [cut off]" if it.interrupted else it.content
             messages.append(Message(role=it.role, content=content))
     return messages
+
+
+def system_prompt(t: Transcript, units: list[Unit]) -> str:
+    """Instructions for reading the call. The model fills a form; code decides and speaks."""
+    unit_lines = "\n".join(
+        f"{u.id}: {u.name}, {u.capacity} people, {'wood-fired' if u.heater == 'wood' else u.heater}"
+        for u in units
+    )
+    return (
+        "You read a phone call to Pirtis on Wheels, a mobile sauna rental, "
+        "and fill in a form about what the caller wants. Code acts on the form.\n"
+        "Only record what the caller actually said. If something was not said, use null.\n\n"
+        f"Calendar:\n{calendar(t.today)}\n\n"
+        f"Units:\n{unit_lines}\n\n"
+        "If the caller asked something off-script, write `answer`: one or two short spoken "
+        "sentences, numbers as words. You know nothing about other customers or their "
+        "bookings; never guess. Never say a unit is free or booked."
+    )
