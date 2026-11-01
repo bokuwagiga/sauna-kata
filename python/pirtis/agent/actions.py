@@ -1,6 +1,8 @@
+import re
 from collections.abc import Callable
 from dataclasses import dataclass
 
+from pirtis.agent.speech import number_words
 from pirtis.api.client import Client
 from pirtis.transcript.types import Action, Effect, Transcript
 
@@ -18,9 +20,12 @@ Handler = Callable[[Action, HandlerContext], Effect]
 
 
 def _say(a: Action, _: HandlerContext) -> Effect:
+    """Speaks the text. Digits are turned into words here, the last step before the
+    caller hears it, so even the model's free-text answer never reads out "240"."""
+    text = re.sub(r"\d+", lambda m: number_words(int(m.group())), a.get("text") or "")
     return {
         "type": "speech",
-        "text": a.get("text"),
+        "text": text,
         "generation_config": a.get("generation_config"),
     }
 
