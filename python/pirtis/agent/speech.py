@@ -6,7 +6,7 @@ from datetime import date
 
 from pirtis.agent.booking import NoOffer, Offer
 from pirtis.agent.extract import CallerInfo
-from pirtis.api.types import Unit
+from pirtis.api.types import Booking, Unit
 
 _ONES = (
     "zero one two three four five six seven eight nine ten eleven twelve thirteen "
@@ -124,3 +124,9 @@ def no_offer_words(reason: NoOffer, units: list[Unit]) -> str:
 def booked_words(o: Offer) -> str:
     """The confirmation after a booking went through."""
     return f"That's booked: {o.unit.name} {_range_words(o.start, o.end)}. See you then!"
+
+
+def booking_words(b: Booking, units: list[Unit]) -> str:
+    """'Mažoji from Saturday the third to Sunday the fourth of October'."""
+    name = next((u.name for u in units if u.id == b.unit_id), "the sauna")
+    return f"{name} {_range_words(b.start, b.end)}"
