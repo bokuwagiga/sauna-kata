@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, fields
 from datetime import date, timedelta
 
 
@@ -28,3 +28,70 @@ class CallerInfo:
     unit: str | None = None  # a unit id like "unit_mazoji", if they asked for one
     confirmed: bool = False  # said yes to our last proposal
     answer: str = ""  # a short reply, only for off-script questions
+
+
+def schema(unit_ids: list[str]) -> dict:
+    """The JSON Schema for CallerInfo, for structured output."""
+    return {
+        "type": "object",
+        "properties": {
+            "intent": {
+                "type": "string",
+                "enum": ["book", "change", "cancel", "check", "other"],
+                "description": "book = new booking, change = move or alter an existing one, "
+                "cancel, check = asking about their existing booking, "
+                "other = anything else",
+            },
+            "wants_human": {
+                "type": "boolean",
+                "description": "Customer wants to speak with a real human employee.",
+            },
+            "name": {
+                "type": ["string", "null"],
+                "description": "As the caller said it, first and last name.",
+            },
+            "people": {
+                "type": ["integer", "null"],
+                "description": "How many people will use the sauna. "
+                "If the caller gives a range ('seven, maybe eight'), "
+                "the larger number. Null if not said.",
+            },
+            "start": {
+                "type": ["string", "null"],
+                "description": "YYYY-MM-DD, looked up in the calendar. Null if not said. "
+                "One day only: start equals end.",
+            },
+            "end": {
+                "type": ["string", "null"],
+                "description": "YYYY-MM-DD, looked up in the calendar. Null if not said. "
+                "One day only: start equals end.",
+            },
+            "tow_kg": {
+                "type": ["integer", "null"],
+                "description": "Braked towing capacity in kg, only if the caller said a number. "
+                "'It's fine' or a car model alone is null.",
+            },
+            "power": {
+                "type": ["boolean", "null"],
+                "description": "True if there is mains power at the site, false if not. "
+                "A generator is not mains. Null if not said.",
+            },
+            "unit": {
+                "type": ["string", "null"],
+                "enum": [*unit_ids, None],
+                "description": "The unit the caller asked for, by name or description, or null.",
+            },
+            "confirmed": {
+                "type": "boolean",
+                "description": "True only if our last line proposed a specific booking and "
+                "the caller agreed to it.",
+            },
+            "answer": {
+                "type": "string",
+                "description": "A short spoken reply, only if the caller asked something "
+                "off-script. Empty string otherwise.",
+            },
+        },
+        "required": [field.name for field in fields(CallerInfo)],
+        "additionalProperties": False,
+    }
