@@ -1,0 +1,78 @@
+id: weekend-minimum
+expect:
+  action: say
+  bookings: []
+judge:
+  - "The reply says weekend rentals are two days minimum."
+  - "The reply offers Saturday to Sunday."
+  - "The reply does not offer Friday."
+  - "The reply asks the caller to confirm before booking; it does not say that a booking has been made."
+transcript:
+  call_id: call_11
+  today: "2026-09-28"
+  now: 33.7
+  caller: {phone: "+37062223344"}
+  items:
+    - type: message
+      role: assistant
+      start: 0.5
+      end: 2.4
+      content: "Pirtis on Wheels, hello?"
+      interrupted: false
+    - type: message
+      role: user
+      start: 2.9
+      end: 12.0
+      content: "hi, it's Jonas. um, could we get the small one just for the Saturday? the tenth? we'd bring it back the same night"
+      is_final: true
+      speech_final: true
+      confidence: 0.9
+      prosody: {emotions: [{name: Calmness, score: 0.55}]}
+    - type: message
+      role: user
+      start: 12.9
+      end: 16.7
+      content: "Friday's no good, we're away till, uh, Saturday morning"
+      is_final: true
+      speech_final: true
+      confidence: 0.84
+      prosody: {emotions: [{name: Calmness, score: 0.5}]}
+    - type: message
+      role: assistant
+      start: 17.2
+      end: 21.4
+      content: "Let me see. Can I get your full name first?"
+      interrupted: false
+    - type: message
+      role: user
+      start: 21.9
+      end: 23.1
+      content: "Jonas Jonaitis"
+      is_final: true
+      speech_final: true
+      confidence: 0.9
+      prosody: {emotions: [{name: Calmness, score: 0.6}]}
+    - type: function_call
+      call_id: c1
+      name: customers.identify
+      arguments: "{\"phone\": \"+37062223344\", \"name\": \"Jonas Jonaitis\"}"
+      start: 23.2
+    - type: function_call_output
+      call_id: c1
+      output: "{\"ok\": true, \"customer_id\": \"cus_07\"}"
+      end: 23.5
+    - type: message
+      role: assistant
+      start: 24.0
+      end: 29.0
+      content: "Thanks Jonas. How many people, and what will you tow it with?"
+      interrupted: false
+    - type: message
+      role: user
+      start: 29.5
+      end: 33.3
+      content: "four. and the Passat, two thousand, like last time"
+      is_final: true
+      speech_final: true
+      confidence: 0.9
+      prosody: {emotions: [{name: Calmness, score: 0.6}]}

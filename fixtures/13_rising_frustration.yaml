@@ -1,0 +1,79 @@
+id: rising-frustration
+expect:
+  action: transfer
+  bookings: []
+transcript:
+  call_id: call_13
+  today: "2026-09-28"
+  now: 44.6
+  caller: {phone: "+37061234567"}
+  items:
+    - type: message
+      role: assistant
+      start: 0.5
+      end: 2.4
+      content: "Pirtis on Wheels, hello?"
+      interrupted: false
+    - type: message
+      role: user
+      start: 2.9
+      end: 11.3
+      content: "hi, Tomas Petrauskas. six of us, weekend after next. there's no power at the cabin. and it's the Golf, fifteen hundred"
+      is_final: true
+      speech_final: true
+      confidence: 0.9
+      prosody: {emotions: [{name: Calmness, score: 0.5}]}
+    - type: function_call
+      call_id: c1
+      name: customers.identify
+      arguments: "{\"phone\": \"+37061234567\", \"name\": \"Tomas Petrauskas\"}"
+      start: 11.4
+    - type: function_call_output
+      call_id: c1
+      output: "{\"ok\": true, \"customer_id\": \"cus_12\"}"
+      end: 11.7
+    - type: message
+      role: assistant
+      start: 12.2
+      end: 17.9
+      content: "Thanks Tomas. For six people I have Vidutinė free that weekend, that's our six-seater."
+      interrupted: false
+    - type: message
+      role: user
+      start: 18.4
+      end: 24.1
+      content: "no, that's the, that's the electric one, isn't it? I said there's no power"
+      is_final: true
+      speech_final: true
+      confidence: 0.9
+      prosody: {emotions: [{name: Anger, score: 0.35}, {name: Doubt, score: 0.3}]}
+    - type: message
+      role: assistant
+      start: 24.6
+      end: 29.9
+      content: "You're right, sorry. The other option for six is Didžioji, the wood-fired eight-seater."
+      interrupted: false
+    - type: message
+      role: user
+      start: 30.4
+      end: 36.5
+      content: "that's the big one. it's too heavy for the Golf. I told you that too"
+      is_final: true
+      speech_final: true
+      confidence: 0.9
+      prosody: {emotions: [{name: Anger, score: 0.58}, {name: Distress, score: 0.25}]}
+    - type: message
+      role: assistant
+      start: 37.0
+      end: 39.7
+      content: "Let me check again what fits."
+      interrupted: true
+    - type: message
+      role: user
+      start: 38.9
+      end: 44.2
+      content: "no. no, stop. can I just talk to a person? an actual person"
+      is_final: true
+      speech_final: true
+      confidence: 0.9
+      prosody: {emotions: [{name: Anger, score: 0.82}, {name: Distress, score: 0.4}]}

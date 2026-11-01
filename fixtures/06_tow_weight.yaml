@@ -1,0 +1,77 @@
+id: tow-weight
+expect:
+  action: say
+  bookings: []
+judge:
+  - "The reply offers Vidutinė."
+  - "The reply does not offer Didžioji as an option. Mentioning it only to say it is too heavy is fine."
+  - "The reply asks the caller to confirm before booking; it does not say that a booking has been made."
+transcript:
+  call_id: call_06
+  today: "2026-09-28"
+  now: 34.5
+  caller: {phone: "+37061234567"}
+  items:
+    - type: message
+      role: assistant
+      start: 0.5
+      end: 2.4
+      content: "Pirtis on Wheels, hello?"
+      interrupted: false
+    - type: message
+      role: user
+      start: 2.9
+      end: 6.7
+      content: "hi, yeah, we're after a sauna for the, um"
+      is_final: true
+      speech_final: true
+      confidence: 0.8
+      prosody: {emotions: [{name: Calmness, score: 0.55}]}
+    - type: message
+      role: user
+      start: 7.6
+      end: 14.8
+      content: "weekend after next. the tenth, eleventh. six of us. the cabin's got mains so, whichever, I don't mind"
+      is_final: true
+      speech_final: true
+      confidence: 0.9
+      prosody: {emotions: [{name: Calmness, score: 0.55}]}
+    - type: message
+      role: assistant
+      start: 15.3
+      end: 18.4
+      content: "Lovely. Can I get your name first?"
+      interrupted: false
+    - type: message
+      role: user
+      start: 18.9
+      end: 20.1
+      content: "Tomas Petrauskas"
+      is_final: true
+      speech_final: true
+      confidence: 0.9
+      prosody: {emotions: [{name: Calmness, score: 0.6}]}
+    - type: function_call
+      call_id: c1
+      name: customers.identify
+      arguments: "{\"phone\": \"+37061234567\", \"name\": \"Tomas Petrauskas\"}"
+      start: 20.2
+    - type: function_call_output
+      call_id: c1
+      output: "{\"ok\": true, \"customer_id\": \"cus_12\"}"
+      end: 20.5
+    - type: message
+      role: assistant
+      start: 21.0
+      end: 24.8
+      content: "Thanks Tomas. What will you be towing it with?"
+      interrupted: false
+    - type: message
+      role: user
+      start: 25.3
+      end: 34.1
+      content: "the Golf. it's a, uh, it does fifteen hundred braked, I think? that's what it says in the book anyway. fifteen hundred"
+      is_final: true
+      speech_final: true
+      confidence: 0.79
+      prosody: {emotions: [{name: Doubt, score: 0.38}, {name: Calmness, score: 0.4}]}

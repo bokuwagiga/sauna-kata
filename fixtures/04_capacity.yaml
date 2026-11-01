@@ -1,0 +1,86 @@
+id: capacity
+expect:
+  action: say
+  bookings: []
+judge:
+  - "The reply offers Didžioji, the eight-person unit."
+  - "The reply does not offer Mažoji or any other unit for fewer than seven people as an option. Mentioning one only to say it is too small is fine."
+  - "The reply asks the caller to confirm before booking; it does not say that a booking has been made."
+transcript:
+  call_id: call_04
+  today: "2026-09-28"
+  now: 45.3
+  caller: {phone: "+37068881122"}
+  items:
+    - type: message
+      role: assistant
+      start: 0.5
+      end: 2.4
+      content: "Pirtis on Wheels, hello?"
+      interrupted: false
+    - type: message
+      role: user
+      start: 2.9
+      end: 8.6
+      content: "hello, hi. um, we had the little one from you before? the, uh, Mažoji?"
+      is_final: true
+      speech_final: true
+      confidence: 0.83
+      prosody: {emotions: [{name: Interest, score: 0.4}, {name: Calmness, score: 0.35}]}
+    - type: message
+      role: user
+      start: 9.5
+      end: 12.6
+      content: "we'd like it again. for next weekend"
+      is_final: true
+      speech_final: true
+      confidence: 0.9
+      prosody: {emotions: [{name: Interest, score: 0.4}, {name: Calmness, score: 0.35}]}
+    - type: message
+      role: assistant
+      start: 13.1
+      end: 15.4
+      content: "Of course. Your name, please?"
+      interrupted: false
+    - type: message
+      role: user
+      start: 15.9
+      end: 17.1
+      content: "Eglė Butkutė"
+      is_final: true
+      speech_final: true
+      confidence: 0.9
+      prosody: {emotions: [{name: Calmness, score: 0.6}]}
+    - type: function_call
+      call_id: c1
+      name: customers.identify
+      arguments: "{\"phone\": \"+37068881122\", \"name\": \"Eglė Butkutė\"}"
+      start: 17.2
+    - type: function_call_output
+      call_id: c1
+      output: "{\"ok\": true, \"customer_id\": \"cus_19\"}"
+      end: 17.5
+    - type: message
+      role: assistant
+      start: 18.0
+      end: 23.7
+      content: "Thanks Eglė. How many people this time, and what will you tow it with?"
+      interrupted: false
+    - type: message
+      role: user
+      start: 24.2
+      end: 32.6
+      content: "so, um, there'll be seven of us this time. maybe eight. my cousins are coming up from Klaipėda, and, uh, yeah"
+      is_final: true
+      speech_final: true
+      confidence: 0.8
+      prosody: {emotions: [{name: Excitement, score: 0.45}, {name: Calmness, score: 0.3}]}
+    - type: message
+      role: user
+      start: 33.5
+      end: 44.9
+      content: "and we've got the Land Cruiser, so. that'll tow anything, three and a half tonnes it says. oh and there's power at the house if that, if that matters"
+      is_final: true
+      speech_final: true
+      confidence: 0.84
+      prosody: {emotions: [{name: Excitement, score: 0.4}, {name: Calmness, score: 0.3}]}

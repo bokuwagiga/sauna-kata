@@ -1,0 +1,104 @@
+id: happy-path
+expect:
+  action: say
+  bookings:
+    - {unit: unit_mazoji, start: "2026-10-06", end: "2026-10-07"}
+transcript:
+  call_id: call_00
+  today: "2026-09-28"
+  now: 64.8
+  caller: {phone: "+37062223344"}
+  items:
+    - type: message
+      role: assistant
+      start: 0.5
+      end: 2.4
+      content: "Pirtis on Wheels, hello?"
+      interrupted: false
+    - type: message
+      role: user
+      start: 2.9
+      end: 9.8
+      content: "hi, uh, yeah, hi. it's Jonas. um, we had the small one off you before, the, uh"
+      is_final: true
+      speech_final: true
+      confidence: 0.78
+      prosody: {emotions: [{name: Calmness, score: 0.55}]}
+    - type: message
+      role: user
+      start: 10.7
+      end: 13.4
+      content: "the Mažoji? we'd like it again"
+      is_final: true
+      speech_final: true
+      confidence: 0.9
+      prosody: {emotions: [{name: Calmness, score: 0.62}, {name: Interest, score: 0.21}]}
+    - type: message
+      role: assistant
+      start: 13.9
+      end: 17.0
+      content: "Lovely. Can I get your full name?"
+      interrupted: false
+    - type: message
+      role: user
+      start: 17.5
+      end: 21.7
+      content: "Jonas Jonaitis. J O N A I T I S"
+      is_final: true
+      speech_final: true
+      confidence: 0.9
+      prosody: {emotions: [{name: Calmness, score: 0.6}]}
+    - type: function_call
+      call_id: c1
+      name: customers.identify
+      arguments: "{\"phone\": \"+37062223344\", \"name\": \"Jonas Jonaitis\"}"
+      start: 21.8
+    - type: function_call_output
+      call_id: c1
+      output: "{\"ok\": true, \"customer_id\": \"cus_07\"}"
+      end: 22.1
+    - type: message
+      role: assistant
+      start: 22.6
+      end: 27.2
+      content: "Thanks Jonas, good to have you back. When were you thinking?"
+      interrupted: false
+    - type: message
+      role: user
+      start: 27.7
+      end: 33.8
+      content: "the, um, sixth and seventh. of October. that's a Tuesday Wednesday I think. yeah, Tuesday"
+      is_final: true
+      speech_final: true
+      confidence: 0.84
+      prosody: {emotions: [{name: Calmness, score: 0.5}, {name: Contemplation, score: 0.3}]}
+    - type: message
+      role: assistant
+      start: 34.3
+      end: 42.3
+      content: "Tuesday the sixth to Wednesday the seventh, got it. How many of you, and what will you tow it with?"
+      interrupted: false
+    - type: message
+      role: user
+      start: 42.8
+      end: 50.4
+      content: "four. four of us. and it's the Passat again, same as last time, it does two thousand, we checked"
+      is_final: true
+      speech_final: true
+      confidence: 0.9
+      prosody: {emotions: [{name: Calmness, score: 0.55}, {name: Interest, score: 0.2}]}
+    - type: message
+      role: assistant
+      start: 50.9
+      end: 61.2
+      content: "Perfect. So that's Mažoji, Tuesday the sixth to Wednesday the seventh, four people, collected with your Passat. Two hundred and forty euros. Shall I book it?"
+      interrupted: false
+    - type: message
+      role: user
+      start: 61.7
+      end: 64.4
+      content: "yeah. yeah, go on, book it"
+      is_final: true
+      speech_final: true
+      confidence: 0.9
+      prosody: {emotions: [{name: Determination, score: 0.5}, {name: Calmness, score: 0.3}]}

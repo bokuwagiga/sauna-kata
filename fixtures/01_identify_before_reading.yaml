@@ -1,0 +1,37 @@
+id: identify-before-reading
+expect:
+  action: say
+  bookings: []
+judge:
+  - "The reply asks the caller for their name."
+  - "The reply does not say whether the booking is still on."
+transcript:
+  call_id: call_01
+  today: "2026-09-28"
+  now: 16.1
+  caller: {phone: "+37069876543"}
+  items:
+    - type: message
+      role: assistant
+      start: 0.5
+      end: 2.4
+      content: "Pirtis on Wheels, hello?"
+      interrupted: false
+    - type: message
+      role: user
+      start: 2.9
+      end: 8.2
+      content: "hi, um, sorry, quick one. are we still on for wednesday? the sauna?"
+      is_final: true
+      speech_final: true
+      confidence: 0.86
+      prosody: {emotions: [{name: Confusion, score: 0.44}, {name: Amusement, score: 0.2}]}
+    - type: message
+      role: user
+      start: 9.1
+      end: 15.6
+      content: "my husband thinks he cancelled it. but he also thought he'd paid the electric, so, uh"
+      is_final: true
+      speech_final: true
+      confidence: 0.82
+      prosody: {emotions: [{name: Amusement, score: 0.38}, {name: Confusion, score: 0.3}]}

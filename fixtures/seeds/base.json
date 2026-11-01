@@ -1,0 +1,28 @@
+{
+  "units": [
+    {"id": "unit_mazoji",   "name": "Mažoji",   "capacity": 4, "gross_weight_kg": 750,  "heater": "wood",     "needs_power": false, "price_per_day": 120},
+    {"id": "unit_statine",  "name": "Statinė",  "capacity": 4, "gross_weight_kg": 900,  "heater": "electric", "needs_power": true,  "price_per_day": 130},
+    {"id": "unit_vidutine", "name": "Vidutinė", "capacity": 6, "gross_weight_kg": 1100, "heater": "electric", "needs_power": true,  "price_per_day": 160},
+    {"id": "unit_didzioji", "name": "Didžioji", "capacity": 8, "gross_weight_kg": 1600, "heater": "wood",     "needs_power": false, "price_per_day": 210}
+  ],
+  "customers": [
+    {"id": "cus_07", "name": "Jonas Jonaitis",    "phone": "+37062223344", "address": "Sodų g. 3, Vilnius",   "past_bookings": 1},
+    {"id": "cus_12", "name": "Tomas Petrauskas",  "phone": "+37061234567", "address": "Ežero g. 8, Trakai",   "past_bookings": 2},
+    {"id": "cus_19", "name": "Eglė Butkutė",      "phone": "+37068881122", "address": "Miško g. 21, Molėtai", "past_bookings": 0},
+    {"id": "cus_31", "name": "Rasa Paulauskienė", "phone": "+37069876543", "address": "Vilniaus g. 14, Kaunas", "past_bookings": 5}
+  ],
+  "bookings": [
+    {"id": "bk_77", "version": 1, "status": "booked", "total": 480,
+     "customer_id": "cus_31", "unit_id": "unit_vidutine", "start": "2026-09-30", "end": "2026-10-02", "people": 6,
+     "site": {"power_available": true}, "tow_capacity_kg": 1800},
+    {"id": "bk_88", "version": 2, "status": "booked", "total": 420,
+     "customer_id": "cus_31", "unit_id": "unit_didzioji", "start": "2026-10-06", "end": "2026-10-07", "people": 8,
+     "site": {"power_available": true}, "tow_capacity_kg": 2500},
+    {"id": "bk_65", "version": 1, "status": "booked", "total": 240,
+     "customer_id": "cus_07", "unit_id": "unit_mazoji", "start": "2026-10-17", "end": "2026-10-18", "people": 4,
+     "site": {"power_available": true}, "tow_capacity_kg": 2000}
+  ],
+  "blocked": [
+    {"unit_id": "unit_statine", "start": "2026-10-09", "end": "2026-10-09", "reason": "service"}
+  ]
+}

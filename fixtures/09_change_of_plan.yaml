@@ -1,0 +1,101 @@
+id: change-of-plan
+setup:
+  bookings:
+    - {id: bk_91, customer: cus_12, unit: unit_mazoji, start: "2026-10-03", end: "2026-10-04", people: 4, power: false, tow: 1500, total: 240}
+expect:
+  action: say
+  bookings:
+    - {id: bk_91, unit: unit_mazoji, start: "2026-10-10", end: "2026-10-11"}
+transcript:
+  call_id: call_09
+  today: "2026-09-28"
+  now: 53.5
+  caller: {phone: "+37061234567"}
+  items:
+    - type: message
+      role: assistant
+      start: 0.5
+      end: 2.4
+      content: "Pirtis on Wheels, hello?"
+      interrupted: false
+    - type: message
+      role: user
+      start: 2.9
+      end: 9.4
+      content: "hi, Tomas Petrauskas. um, I'd like the small sauna, the Mažoji, for this weekend. Saturday, Sunday"
+      is_final: true
+      speech_final: true
+      confidence: 0.9
+      prosody: {emotions: [{name: Calmness, score: 0.6}]}
+    - type: function_call
+      call_id: c1
+      name: customers.identify
+      arguments: "{\"phone\": \"+37061234567\", \"name\": \"Tomas Petrauskas\"}"
+      start: 9.5
+    - type: function_call_output
+      call_id: c1
+      output: "{\"ok\": true, \"customer_id\": \"cus_12\"}"
+      end: 9.8
+    - type: message
+      role: assistant
+      start: 10.3
+      end: 15.3
+      content: "Thanks Tomas. How many people, and what will you tow it with?"
+      interrupted: false
+    - type: message
+      role: user
+      start: 15.8
+      end: 19.2
+      content: "four. and the Golf, it does fifteen hundred"
+      is_final: true
+      speech_final: true
+      confidence: 0.9
+      prosody: {emotions: [{name: Calmness, score: 0.5}]}
+    - type: message
+      role: assistant
+      start: 19.7
+      end: 30.4
+      content: "So that's Mažoji, Saturday the third to Sunday the fourth of October, four people, collected with the Golf. Two hundred and forty euros. Shall I book it?"
+      interrupted: false
+    - type: message
+      role: user
+      start: 30.9
+      end: 32.1
+      content: "yes please"
+      is_final: true
+      speech_final: true
+      confidence: 0.9
+      prosody: {emotions: [{name: Calmness, score: 0.6}]}
+    - type: function_call
+      call_id: c2
+      name: bookings.create
+      arguments: "{\"customer_id\": \"cus_12\", \"unit_id\": \"unit_mazoji\", \"start\": \"2026-10-03\", \"end\": \"2026-10-04\", \"people\": 4, \"site\": {\"power_available\": false}, \"tow_capacity_kg\": 1500}"
+      start: 32.2
+    - type: function_call_output
+      call_id: c2
+      output: "{\"customer_id\": \"cus_12\", \"unit_id\": \"unit_mazoji\", \"start\": \"2026-10-03\", \"end\": \"2026-10-04\", \"people\": 4, \"site\": {\"power_available\": false}, \"tow_capacity_kg\": 1500, \"id\": \"bk_91\", \"version\": 1, \"status\": \"booked\", \"total\": 240}"
+      end: 32.5
+    - type: message
+      role: assistant
+      start: 33.0
+      end: 38.0
+      content: "Booked. Mažoji, Saturday the third to Sunday the fourth. See you then."
+      interrupted: false
+    - type: message
+      role: user
+      start: 40.0
+      end: 42.3
+      content: "actually, hang on. hang on"
+      is_final: true
+      speech_final: true
+      confidence: 0.8
+      prosody: {emotions: [{name: Awkwardness, score: 0.4}, {name: Calmness, score: 0.3}]}
+    - type: message
+      role: user
+      start: 43.2
+      end: 53.1
+      content: "could we push it a week? Rūta's got a thing on the third. same days, just the, the week after. just move it, I'm driving"
+      is_final: true
+      speech_final: true
+      confidence: 0.84
+      prosody: {emotions: [{name: Awkwardness, score: 0.35}, {name: Calmness, score: 0.3}]}

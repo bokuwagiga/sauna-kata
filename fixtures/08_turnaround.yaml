@@ -1,0 +1,87 @@
+id: turnaround
+expect:
+  action: say
+  bookings: []
+judge:
+  - "The reply says Saturday is not possible for Vidutinė."
+  - "The reply offers Vidutinė starting Sunday."
+  - "The reply does not offer a different unit as an option."
+  - "The reply asks the caller to confirm before booking; it does not say that a booking has been made."
+transcript:
+  call_id: call_08
+  today: "2026-09-28"
+  now: 48.7
+  caller: {phone: "+37062223344"}
+  items:
+    - type: message
+      role: assistant
+      start: 0.5
+      end: 2.4
+      content: "Pirtis on Wheels, hello?"
+      interrupted: false
+    - type: message
+      role: user
+      start: 2.9
+      end: 9.8
+      content: "hi, Jonas here. um, we want the middle one, the electric six seater. this Saturday and Sunday"
+      is_final: true
+      speech_final: true
+      confidence: 0.9
+      prosody: {emotions: [{name: Interest, score: 0.4}, {name: Calmness, score: 0.35}]}
+    - type: message
+      role: user
+      start: 10.7
+      end: 22.1
+      content: "and it has to be that one, the, uh, the wood smoke sets off my asthma. and it has to be this weekend, it's Rūta's birthday. on the Sunday"
+      is_final: true
+      speech_final: true
+      confidence: 0.84
+      prosody: {emotions: [{name: Interest, score: 0.35}, {name: Determination, score: 0.3}]}
+    - type: message
+      role: assistant
+      start: 22.6
+      end: 26.8
+      content: "Let me check. Can I get your full name first?"
+      interrupted: false
+    - type: message
+      role: user
+      start: 27.3
+      end: 28.5
+      content: "Jonas Jonaitis"
+      is_final: true
+      speech_final: true
+      confidence: 0.9
+      prosody: {emotions: [{name: Calmness, score: 0.6}]}
+    - type: function_call
+      call_id: c1
+      name: customers.identify
+      arguments: "{\"phone\": \"+37062223344\", \"name\": \"Jonas Jonaitis\"}"
+      start: 28.6
+    - type: function_call_output
+      call_id: c1
+      output: "{\"ok\": true, \"customer_id\": \"cus_07\"}"
+      end: 28.9
+    - type: message
+      role: assistant
+      start: 29.4
+      end: 36.6
+      content: "Thanks Jonas. How many people, is there power where it's going, and what will you tow it with?"
+      interrupted: false
+    - type: message
+      role: user
+      start: 37.1
+      end: 42.1
+      content: "six. yeah there's power, it's the garden. and the Passat, two thousand"
+      is_final: true
+      speech_final: true
+      confidence: 0.9
+      prosody: {emotions: [{name: Calmness, score: 0.55}]}
+    - type: message
+      role: user
+      start: 43.0
+      end: 48.3
+      content: "um, Saturday morning we'd want it, early-ish. is that, is that a problem?"
+      is_final: true
+      speech_final: true
+      confidence: 0.85
+      prosody: {emotions: [{name: Doubt, score: 0.3}, {name: Calmness, score: 0.4}]}

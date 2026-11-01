@@ -1,0 +1,73 @@
+id: interim-speech
+expect:
+  action: wait
+  bookings: []
+transcript:
+  call_id: call_02
+  today: "2026-09-28"
+  now: 27.9
+  caller: {phone: "+37061234567"}
+  items:
+    - type: message
+      role: assistant
+      start: 0.5
+      end: 2.4
+      content: "Pirtis on Wheels, hello?"
+      interrupted: false
+    - type: message
+      role: user
+      start: 2.9
+      end: 9.4
+      content: "hi. um. so I need a sauna, it's for a hen do. my sister's. don't ask"
+      is_final: true
+      speech_final: true
+      confidence: 0.9
+      prosody: {emotions: [{name: Amusement, score: 0.5}, {name: Calmness, score: 0.3}]}
+    - type: message
+      role: assistant
+      start: 9.9
+      end: 13.7
+      content: "Ha, no problem. Can I get your name first?"
+      interrupted: false
+    - type: message
+      role: user
+      start: 14.2
+      end: 15.4
+      content: "Tomas. Petrauskas."
+      is_final: true
+      speech_final: true
+      confidence: 0.9
+      prosody: {emotions: [{name: Calmness, score: 0.6}]}
+    - type: function_call
+      call_id: c1
+      name: customers.identify
+      arguments: "{\"phone\": \"+37061234567\", \"name\": \"Tomas Petrauskas\"}"
+      start: 15.5
+    - type: function_call_output
+      call_id: c1
+      output: "{\"ok\": true, \"customer_id\": \"cus_12\"}"
+      end: 15.8
+    - type: message
+      role: assistant
+      start: 16.3
+      end: 19.7
+      content: "Thanks Tomas. How many are coming, and when?"
+      interrupted: false
+    - type: message
+      role: user
+      start: 21.5
+      end: 22.3
+      content: uh
+      is_final: true
+      speech_final: true
+      confidence: 0.52
+      prosody: {emotions: [{name: Contemplation, score: 0.4}]}
+    - type: message
+      role: user
+      start: 23.5
+      end: 27.7
+      content: "so it'd be the, hang on, the one with the"
+      is_final: true
+      speech_final: false
+      confidence: 0.66
+      prosody: {emotions: [{name: Contemplation, score: 0.57}]}

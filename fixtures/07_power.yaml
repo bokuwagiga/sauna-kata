@@ -1,0 +1,77 @@
+id: power
+expect:
+  action: say
+  bookings: []
+judge:
+  - "The reply offers Didžioji."
+  - "The reply does not offer Vidutinė or Statinė as an option. Mentioning them only to say they need power is fine."
+  - "The reply asks the caller to confirm before booking; it does not say that a booking has been made."
+transcript:
+  call_id: call_07
+  today: "2026-09-28"
+  now: 37.1
+  caller: {phone: "+37068881122"}
+  items:
+    - type: message
+      role: assistant
+      start: 0.5
+      end: 2.4
+      content: "Pirtis on Wheels, hello?"
+      interrupted: false
+    - type: message
+      role: user
+      start: 2.9
+      end: 10.1
+      content: "hi, um, it's for a summer cabin, up by the lake. weekend after next. there's six of us"
+      is_final: true
+      speech_final: true
+      confidence: 0.9
+      prosody: {emotions: [{name: Calmness, score: 0.5}]}
+    - type: message
+      role: assistant
+      start: 10.6
+      end: 14.0
+      content: "Sounds good. Can I get your name first?"
+      interrupted: false
+    - type: message
+      role: user
+      start: 14.5
+      end: 15.7
+      content: "Eglė Butkutė"
+      is_final: true
+      speech_final: true
+      confidence: 0.9
+      prosody: {emotions: [{name: Calmness, score: 0.6}]}
+    - type: function_call
+      call_id: c1
+      name: customers.identify
+      arguments: "{\"phone\": \"+37068881122\", \"name\": \"Eglė Butkutė\"}"
+      start: 15.8
+    - type: function_call_output
+      call_id: c1
+      output: "{\"ok\": true, \"customer_id\": \"cus_19\"}"
+      end: 16.1
+    - type: message
+      role: assistant
+      start: 16.6
+      end: 22.7
+      content: "Thanks Eglė. Does the cabin have mains power, and what will you tow it with?"
+      interrupted: false
+    - type: message
+      role: user
+      start: 23.2
+      end: 29.7
+      content: "no. no mains, no. we've got a, uh, generator, for the fridge, but that's it really"
+      is_final: true
+      speech_final: true
+      confidence: 0.83
+      prosody: {emotions: [{name: Calmness, score: 0.5}, {name: Contemplation, score: 0.25}]}
+    - type: message
+      role: user
+      start: 30.6
+      end: 36.7
+      content: "and the Hilux. it tows three tonnes, more or less. three, three and a bit"
+      is_final: true
+      speech_final: true
+      confidence: 0.81
+      prosody: {emotions: [{name: Calmness, score: 0.5}]}
