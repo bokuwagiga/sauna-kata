@@ -7,13 +7,14 @@ you can use or ignore.
 
 import json
 
+from pirtis.agent.facts import caller_gone_quiet, caller_still_talking, last_message
 from pirtis.api.client import Client as ApiClient
 from pirtis.api.types import AvailabilityQuery, BookingRequest, Site
 from pirtis.jsonutil import json_default
 from pirtis.llm.client import Client as LlmClient
 from pirtis.llm.client import Message
 from pirtis.llm.loop import Tool, ToolResult, run_agent
-from pirtis.transcript.types import Action, Transcript, say
+from pirtis.transcript.types import Action, Transcript, say, wait
 
 
 def decide(t: Transcript, api: ApiClient, llm: LlmClient) -> list[Action]:
@@ -22,6 +23,13 @@ def decide(t: Transcript, api: ApiClient, llm: LlmClient) -> list[Action]:
     What is here now is a starting point. It passes the happy-path fixture
     and not much else.
     """
+    if caller_still_talking(t):
+        return [wait(1.0)]
+    if caller_gone_quiet(t):
+        return [say("Are you still there? Take your time.", "warm", 1.0)]
+    last = last_message(t)
+    if last is not None and last.role == "assistant":
+        return [wait(1.0)]
     units = api.list_units()
     system = (
         "You are the receptionist for Pirtis on Wheels, a mobile sauna rental. "
