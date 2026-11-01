@@ -28,7 +28,7 @@ from pirtis.api.types import (
     Unit,
 )
 from pirtis.llm.client import Client as LlmClient
-from pirtis.transcript.types import Action, Transcript, say, transfer, wait
+from pirtis.transcript.types import Action, Transcript, end_call, say, transfer, wait
 
 _QUEUE = "front_desk"  # the human queue we hand calls to
 
@@ -59,6 +59,8 @@ def decide(t: Transcript, api: ApiClient, llm: LlmClient) -> list[Action]:
     info = extract(t, units, llm)
     if info.intent == "staff":
         return [transfer(_QUEUE, "caller asked for a person")]
+    if info.intent == "goodbye":
+        return [say("Thanks for calling. Bye!", "warm", 1.0), end_call("caller said goodbye")]
 
     # Nothing about a customer is read or changed before they are identified.
     if who is None:

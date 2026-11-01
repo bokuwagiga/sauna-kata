@@ -97,8 +97,9 @@ decide(t)
                   seconds → "are you still there?"; we spoke last → wait;
                   anger ≥ 0.7 → transfer; failed identify → transfer
   2. extract.py   ONE model call, strict JSON, temperature 0 → CallerInfo
-                  (intent, name, people, dates, tow, power, unit, confirmed, answer)
-  3. agent.py     staff → transfer; not identified → identify from the spoken name
+                  (latest line, intent, answer, name, people, dates, tow, power, unit, confirmed)
+  3. agent.py     staff → transfer; goodbye → say goodbye and end_call;
+                  not identified → identify from the spoken name
                   or ask for it; then book / change / check / cancel / other
   4. booking.py   one missing question at a time; weekend minimum; find_offer:
                   the asked unit on their dates, then on the nearest free dates,

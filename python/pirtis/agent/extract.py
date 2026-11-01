@@ -32,7 +32,9 @@ def calendar(today: str, days: int = 21) -> str:
 class CallerInfo:
     """What the caller has said so far, as read by the model. None means not said."""
 
-    intent: str = "other"  # book | change | cancel | check | staff | other
+    latest: str = ""  # the caller's latest line, quoted, so intent is read from it
+    intent: str = "other"  # book | change | cancel | check | staff | goodbye | other
+    answer: str = ""  # the reply when intent is other, written right after it
     name: str | None = None  # full name, if the caller gave it
     people: int | None = None  # the larger number if a range
     when: str | None = None  # the caller's own words about the dates, quoted
@@ -42,7 +44,6 @@ class CallerInfo:
     power: bool | None = None  # mains power at the site
     unit: str | None = None  # a unit id like "unit_mazoji", if they asked for one
     confirmed: bool = False  # said yes to our last proposal
-    answer: str = ""  # a short reply, only for off-script questions
 
 
 def schema(unit_ids: list[str]) -> dict:
@@ -50,13 +51,24 @@ def schema(unit_ids: list[str]) -> dict:
     return {
         "type": "object",
         "properties": {
+            "latest": {
+                "type": "string",
+                "description": "The caller's latest line, quoted.",
+            },
             "intent": {
                 "type": "string",
-                "enum": ["book", "change", "cancel", "check", "staff", "other"],
+                "enum": ["book", "change", "cancel", "check", "staff", "goodbye", "other"],
                 "description": "book = new booking, change = move or alter an existing one, "
                 "cancel, check = asking about their existing booking, "
                 "staff = asks to be put through to a person at Pirtis on Wheels, "
+                "goodbye = the caller's latest line ends the call ('thanks, that's all, bye'), "
+                "even if the call was about a booking, "
                 "other = anything else, including questions about other customers",
+            },
+            "answer": {
+                "type": "string",
+                "description": "When intent is other: a short spoken reply to the caller's "
+                "latest line. Empty string for every other intent.",
             },
             "name": {
                 "type": ["string", "null"],
@@ -104,11 +116,6 @@ def schema(unit_ids: list[str]) -> dict:
                 "type": "boolean",
                 "description": "True only if our last line proposed a specific booking and "
                 "the caller agreed to it.",
-            },
-            "answer": {
-                "type": "string",
-                "description": "A short spoken reply, only if the caller asked something "
-                "off-script. Empty string otherwise.",
             },
         },
         "required": [field.name for field in fields(CallerInfo)],
