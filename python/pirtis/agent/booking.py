@@ -1,3 +1,5 @@
+from datetime import date, timedelta
+
 from pirtis.agent.extract import CallerInfo
 
 
@@ -13,3 +15,16 @@ def missing_question(info: CallerInfo) -> str | None:
             "do you know its braked towing capacity, in kilos?"
         )
     return None
+
+
+def weekend_end(start: str, end: str | None) -> str:
+    """The end date to offer: one day if none was given, and two days if a
+    one-day rental falls on a Saturday or Sunday."""
+    if end is None:
+        end = start
+    if start != end:
+        return end
+    day = date.fromisoformat(start)
+    if day.weekday() >= 5:
+        day = day + timedelta(days=1)
+    return day.isoformat()
