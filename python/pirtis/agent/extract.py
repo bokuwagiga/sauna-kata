@@ -1,18 +1,29 @@
+import json
 from dataclasses import dataclass, fields
 from datetime import date, timedelta
 
 from pirtis.api.types import Unit
-from pirtis.llm.client import Message
+from pirtis.llm.client import Client as LlmClient
+from pirtis.llm.client import Message, Request, ResponseFormat
 from pirtis.transcript.types import Transcript
+
+_WEEKENDS = {0: "this weekend, next weekend", 1: "the weekend after next"}
 
 
 def calendar(today: str, days: int = 21) -> str:
-    """One line per day from today, for the model to look dates up in."""
+    """One line per day from today, for the model to look dates up in. Weekends are
+    labelled by code, because the model gets 'this Saturday' wrong on its own."""
     start_day = date.fromisoformat(today)
+    monday = start_day - timedelta(days=start_day.weekday())  # Monday of this week
     calendar_lines = []
     for i in range(days):
         day = start_day + timedelta(days=i)
-        calendar_lines.append(f"{day:%Y-%m-%d %A}")
+        line = f"{day:%Y-%m-%d %A}"
+        if day.weekday() >= 5:  # Saturday is 5, Sunday is 6
+            label = _WEEKENDS.get((day - monday).days // 7)
+            if label:
+                line += f" ({label})"
+        calendar_lines.append(line)
     calendar_lines[0] += " (today)"
     return "\n".join(calendar_lines)
 
@@ -25,6 +36,7 @@ class CallerInfo:
     wants_human: bool = False  # asked for a person, in any words
     name: str | None = None  # full name, if the caller gave it
     people: int | None = None  # the larger number if a range
+    when: str | None = None  # the caller's own words about the dates, quoted
     start: str | None = None  # YYYY-MM-DD
     end: str | None = None  # YYYY-MM-DD, inclusive
     tow_kg: int | None = None  # only if the caller said a number
@@ -48,7 +60,9 @@ def schema(unit_ids: list[str]) -> dict:
             },
             "wants_human": {
                 "type": "boolean",
-                "description": "Customer wants to speak with a real human employee.",
+                "description": "True only if the caller asks to speak to a person at Pirtis on "
+                "Wheels (staff, a manager, 'a real person'). "
+                "Wanting to contact someone else is false.",
             },
             "name": {
                 "type": ["string", "null"],
@@ -60,15 +74,20 @@ def schema(unit_ids: list[str]) -> dict:
                 "If the caller gives a range ('seven, maybe eight'), "
                 "the larger number. Null if not said.",
             },
+            "when": {
+                "type": ["string", "null"],
+                "description": "The caller's own words about the dates, quoted, "
+                "e.g. 'this Saturday and Sunday'. Null if not said.",
+            },
             "start": {
                 "type": ["string", "null"],
-                "description": "YYYY-MM-DD, looked up in the calendar. Null if not said. "
-                "One day only: start equals end.",
+                "description": "First day, YYYY-MM-DD, copied from the calendar line that "
+                "matches `when`. A weekend is Saturday to Sunday. Null if not said.",
             },
             "end": {
                 "type": ["string", "null"],
-                "description": "YYYY-MM-DD, looked up in the calendar. Null if not said. "
-                "One day only: start equals end.",
+                "description": "Last day, inclusive, YYYY-MM-DD, copied from the calendar. "
+                "Equal to start for a single day. Null if not said.",
             },
             "tow_kg": {
                 "type": ["integer", "null"],
@@ -127,3 +146,20 @@ def system_prompt(t: Transcript, units: list[Unit]) -> str:
         "sentences, numbers as words. You know nothing about other customers or their "
         "bookings; never guess. Never say a unit is free or booked."
     )
+
+
+def extract(t: Transcript, units: list[Unit], llm: LlmClient) -> CallerInfo:
+    """One model call that reads the call into a CallerInfo. Any failure gives an empty
+    CallerInfo, so the caller hears a question instead of silence."""
+    req = Request(
+        messages=[Message(role="system", content=system_prompt(t, units)), *history(t)],
+        temperature=0,
+        response_format=ResponseFormat(
+            name="caller_info", schema=schema([u.id for u in units]), strict=True
+        ),
+    )
+    try:
+        reply = llm.chat(req)
+        return CallerInfo(**json.loads(reply.content))
+    except Exception:
+        return CallerInfo()
