@@ -1,6 +1,9 @@
 from dataclasses import dataclass, fields
 from datetime import date, timedelta
 
+from pirtis.llm.client import Message
+from pirtis.transcript.types import Transcript
+
 
 def calendar(today: str, days: int = 21) -> str:
     """One line per day from today, for the model to look dates up in."""
@@ -95,3 +98,13 @@ def schema(unit_ids: list[str]) -> dict:
         "required": [field.name for field in fields(CallerInfo)],
         "additionalProperties": False,
     }
+
+
+def history(t: Transcript) -> list[Message]:
+    """The spoken lines as chat messages. API calls stay out: code reads those, not the model."""
+    messages = []
+    for it in t.items:
+        if it.type == "message":
+            content = it.content + " [cut off]" if it.interrupted else it.content
+            messages.append(Message(role=it.role, content=content))
+    return messages
