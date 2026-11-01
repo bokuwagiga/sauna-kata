@@ -96,7 +96,9 @@ def schema(unit_ids: list[str]) -> dict:
             "unit": {
                 "type": ["string", "null"],
                 "enum": [*unit_ids, None],
-                "description": "The unit the caller asked for, by name or description, or null.",
+                "description": "The unit the caller asked for, by name or description "
+                "('the big one', 'the electric six seater'). How many people are coming "
+                "is not a request for a unit: null.",
             },
             "confirmed": {
                 "type": "boolean",
