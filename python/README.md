@@ -86,3 +86,45 @@ Data that crosses a boundary keeps the wire spelling: the transcript, the API re
 You may use any tools you like, including AI. After you submit, we will go through the code with you. Be ready to explain every line, also the lines your tools wrote.
 
 Send us the repo. Plan for two to three hours. If you run out of time, write a short note about what you would do next.
+
+## My solution
+
+Plain code decides everything it can; the model only reads what the caller said. A turn costs at most one model call, and none when the caller is mid-sentence, silent, or upset.
+
+```
+decide(t)
+  1. facts.py     plain code on the transcript: still talking → wait; quiet five
+                  seconds → "are you still there?"; we spoke last → wait;
+                  anger ≥ 0.7 → transfer; failed identify → transfer
+  2. extract.py   ONE model call, strict JSON, temperature 0 → CallerInfo
+                  (intent, name, people, dates, tow, power, unit, confirmed, answer)
+  3. agent.py     staff → transfer; not identified → identify from the spoken name
+                  or ask for it; then book / change / check / cancel / other
+  4. booking.py   one missing question at a time; weekend minimum; find_offer:
+                  the asked unit on their dates, then on the nearest free dates,
+                  then the smallest other unit that fits
+  5. speech.py    every offer sentence is written by code, numbers and dates as words
+  6. actions.py   the say handler turns any digit left into words
+```
+
+Why it is built this way:
+
+- **The model never offers anything.** It fills a form; `find_offer` checks every rule and reads availability from the API, so an offer cannot be one the API will refuse. The model never sees prices, weights, availability or other customers' bookings, so it cannot leak them (test 10).
+- **None is not False.** `tow_kg` and `power` stay `None` until the caller says them. Unknown power is asked only when it changes the outcome; "it's fine" is not a towing capacity (test 05).
+- **Code does what a small model gets wrong.** Code labels weekends in the calendar, and the schema has the model quote the caller's date words (`when`) before it writes `start` and `end`. With strict JSON the property order is the order the model writes, so it writes its evidence before its answer. Without this, "this Saturday and Sunday" came back as Thursday–Friday every time, even at temperature 0.
+- **Booking needs more than the model's yes.** The model said `confirmed` in test 05 before anything was proposed. We book only when it says yes, our last line named the unit, and nothing was changed from the request.
+- **The rules live in one place.** The turnaround day comes from the availability API, not a copy of the rule.
+- **On 409** (dates taken between reading and writing), we look again once: the same offer is retried, anything else is offered instead.
+
+Results: `uv run harness --runs 3 --need 2` passes 14/14, at 0–1 model calls and about 1.2 s per turn. `uv run pytest` covers the rules and the spoken words without the model.
+
+On Windows, set `PYTHONUTF8=1`. Otherwise Python reads the fixtures in the locale encoding and "Eglė" arrives as "EglÄ—".
+
+### Known limits and what I would do next
+
+- Cancel transfers to a human; it would need a confirmation step.
+- A failed `customers.identify` call (API error) is treated like an unknown caller and transferred, with the reason "not a known customer". Next: tell the two apart.
+- An unknown caller is transferred on the first failed identify. A misheard name might deserve one "could you spell that?" first.
+- Moving a booking by a day or less is refused. Availability counts the booking itself as busy, so that check needs the booking's own days removed first.
+- "Next weekend" is ambiguous. From a weekday it means the coming weekend, and "the weekend after next" the one after (as in tests 05 and 06). The dates are read back before booking, so the caller can correct them.
+- The anger threshold (0.7) and the silence threshold (five seconds) are judgement calls. I would tune them on real calls.
