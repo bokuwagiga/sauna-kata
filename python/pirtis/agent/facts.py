@@ -1,3 +1,6 @@
+import json
+
+from pirtis.api.types import IdentifyResult
 from pirtis.transcript.types import Item, Transcript
 
 
@@ -30,3 +33,20 @@ def caller_emotion(t: Transcript, name: str) -> float:
         if e.name == name:
             return e.score
     return 0.0
+
+
+def identify_result(t: Transcript) -> IdentifyResult | None:
+    """The outcome of the last customers.identify in the call, or None if there was none."""
+    for it in reversed(t.items):
+        if it.type == "function_call" and it.name == "customers.identify":
+            call_id = it.call_id
+            break
+    else:
+        return None
+    for it in reversed(t.items):
+        if it.type == "function_call_output" and call_id == it.call_id:
+            d = json.loads(it.output)
+            break
+    else:
+        return None
+    return IdentifyResult(ok=bool(d.get("ok")), customer_id=d.get("customer_id", ""))

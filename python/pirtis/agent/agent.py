@@ -7,7 +7,13 @@ you can use or ignore.
 
 import json
 
-from pirtis.agent.facts import caller_emotion, caller_gone_quiet, caller_still_talking, last_message
+from pirtis.agent.facts import (
+    caller_emotion,
+    caller_gone_quiet,
+    caller_still_talking,
+    identify_result,
+    last_message,
+)
 from pirtis.api.client import Client as ApiClient
 from pirtis.api.types import AvailabilityQuery, BookingRequest, Site
 from pirtis.jsonutil import json_default
@@ -34,6 +40,10 @@ def decide(t: Transcript, api: ApiClient, llm: LlmClient) -> list[Action]:
     # An explicit "can I talk to a person" comes from the model (wants_human), added later.
     if caller_emotion(t, "Anger") >= 0.7:
         return [transfer("human", "caller is upset")]
+
+    who = identify_result(t)
+    if who is not None and not who.ok:
+        return [transfer("human", "caller is not a known customer")]
 
     units = api.list_units()
     system = (
